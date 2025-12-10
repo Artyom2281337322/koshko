@@ -5,7 +5,7 @@ export default function ImageCard({ image }) {
 
   return (
     <div className="group overflow-hidden rounded-lg bg-gray-800 border border-gray-700 hover:border-pink-500 transition-all duration-300 hover:scale-[1.02]">
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative overflow-hidden">
         <img
           src={image.url}
           alt={image.title}

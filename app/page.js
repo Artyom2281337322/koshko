@@ -14,10 +14,10 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
+    loadInitialData();
   }, []);
 
-  const loadData = async () => {
+  const loadInitialData = async () => {
     setLoading(true);
     try {
       const [cats, imgs] = await Promise.all([
@@ -32,26 +32,43 @@ export default function Home() {
     setLoading(false);
   };
 
-  const handleCategoryChange = async (category) => {
+  const loadCategoryImages = async (category) => {
     setLoading(true);
-    setSelectedCategory(category);
-    const imgs = await getImagesByCategory(category, 12);
-    setImages(imgs);
+    try {
+      const imgs = await getImagesByCategory(category, 12);
+      setImages(imgs);
+    } catch (error) {
+      console.error('Ошибка загрузки изображений:', error);
+    }
     setLoading(false);
+  };
+
+  const handleCategoryChange = async (category) => {
+    setSelectedCategory(category);
+    await loadCategoryImages(category);
   };
 
   const handleRandom = async () => {
     setLoading(true);
-    const randomImg = await getRandomImage();
-    setImages([randomImg]);
+    try {
+      const randomImg = await getRandomImage(selectedCategory);
+      setImages([randomImg]);
+    } catch (error) {
+      console.error('Ошибка загрузки случайного изображения:', error);
+      await loadCategoryImages(selectedCategory);
+    }
     setLoading(false);
+  };
+
+  const handleRefresh = async () => {
+    await loadCategoryImages(selectedCategory);
   };
 
   return (
     <Layout>
       <Header 
         onRandom={handleRandom} 
-        onRefresh={loadData} 
+        onRefresh={handleRefresh} 
       />
       
       <main className="container mx-auto px-4 py-6">
